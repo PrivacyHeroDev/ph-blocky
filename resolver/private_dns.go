@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"sort"
@@ -111,16 +112,40 @@ func buildGroupsMap(slice []string) map[string]bool {
 	return m
 }
 
-func getEdnsData(request *Request, cfg map[string][]string, groups *[]string) {
+func getMacFromEDNS0(request *Request) (string, error) {
+
 	opt := request.Req.IsEdns0()
+
 	if opt != nil {
-		data := (opt.Option[0].(*dns.EDNS0_LOCAL)).Data
-		macStr := net.HardwareAddr(data).String()
-		groupsByName, found := cfg[macStr]
+		if len(opt.Option) == 0 {
+			return "", errors.New("opt.option of len 0")
+		}
+		for _, v := range opt.Option {
+			switch m := v.(type) {
+			case *dns.EDNS0_LOCAL:
+				return net.HardwareAddr(m.Data).String(), nil
+			}
+		}
+
+		return "", errors.New("no EDNS0_LOCAL found")
+
+	}
+
+	return "", errors.New("opt nil")
+}
+
+func getEdnsData(request *Request, cfg map[string][]string, groups *[]string) {
+	mac, err := getMacFromEDNS0(request)
+	if err != nil {
+		logger("groups_to_check").Error(err)
+	}
+
+	if len(mac) > 0 {
+		groupsByName, found := cfg[mac]
 		if found {
 			*groups = append(*groups, groupsByName...)
 		}
-
-		logger("groups_to_check").Debugf("macstr: %s, groups: %v", macStr, groups)
 	}
+
+	logger("groups_to_check").Debugf("macstr: %s, groups: %v", mac, groups)
 }

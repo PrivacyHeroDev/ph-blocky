@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -65,18 +66,22 @@ func (cr *CnameResolver) Resolve(req *Request) (*Response, error) {
 						}
 						rr.Target = cr.cfg.Groups[g].Cname
 						rr.Hdr = h
-						response.Answer = append(response.Answer, rr)
 
 						rr2 := new(dns.Msg)
 						rr2.SetQuestion(rr.Target, dns.TypeA)
 						rr2.RecursionDesired = true
+
 						c := new(dns.Client)
 						resp2, _, err := c.Exchange(rr2, "8.8.8.8:53")
 						if err != nil {
 							return nil, err
 						}
+						if resp2 == nil || resp2.Rcode != dns.RcodeSuccess {
+							return nil, errors.New(fmt.Sprintf("failed to get an valid answer\n%#v, code: %d", resp2, resp2.Rcode))
+						}
 
 						response.Answer = append(response.Answer, resp2.Answer...)
+						response.Answer = append(response.Answer, rr)
 
 						logger.WithFields(logrus.Fields{
 							"answer": util.AnswerToString(response.Answer),

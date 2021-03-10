@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -209,11 +208,7 @@ func createQueryLogRow(logEntry *queryLogEntry) []string {
 	clientID := request.ClientIP.String()
 
 	if request.ClientIP.String() == "127.0.0.1" {
-		opt := request.Req.IsEdns0()
-		if opt != nil {
-			data := (opt.Option[0].(*dns.EDNS0_LOCAL)).Data
-			clientID = net.HardwareAddr(data).String()
-		}
+		clientID, _ = getMacFromEDNS0(logEntry.request)
 	}
 
 	return []string{
