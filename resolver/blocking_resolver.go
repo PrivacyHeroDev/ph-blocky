@@ -298,6 +298,10 @@ func (r *BlockingResolver) handleBlacklist(groupsToCheck []string,
 			return r.handleBlocked(logger, request, question, fmt.Sprintf("BLOCKED PRIVATE (%d)", port))
 		}
 
+		if resp.Rcode == dns.RcodeSuccess {
+			return &Response{Res: resp, RType: RESOLVED, Reason: fmt.Sprintf("RESOLVED PRIVATE (%d)", port)}, nil
+		}
+
 		// if blocked, group := r.matches(groupsToCheck, r.blacklistMatcher, domain); blocked {
 		// 	return r.handleBlocked(logger, request, question, fmt.Sprintf("BLOCKED (%s)", group))
 		// }
