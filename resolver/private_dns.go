@@ -20,6 +20,7 @@ func callExternal(msg *dns.Msg, upstreamURL string) (*dns.Msg, time.Duration, er
 		client: &dns.Client{
 			Net:     "udp",
 			Timeout: defaultTimeout,
+			UDPSize: 4096,
 		},
 	}
 	return dnsClient.callExternal(msg, upstreamURL)
