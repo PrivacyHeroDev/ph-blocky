@@ -23,6 +23,7 @@ func callExternal(msg *dns.Msg, upstreamURL string) (*dns.Msg, time.Duration, er
 			UDPSize: 4096,
 		},
 	}
+	msg.SetEdns0(4096, false)
 	return dnsClient.callExternal(msg, upstreamURL)
 
 }
