@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 
 	"github.com/miekg/dns"
 	"github.com/onsi/gomega/types"

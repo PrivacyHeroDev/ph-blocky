@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stgnet/blocky/log"
-	"github.com/stgnet/blocky/metrics"
+	"github.com/privacyherodev/ph-blocky/log"
+	"github.com/privacyherodev/ph-blocky/metrics"
 
 	"github.com/prometheus/client_golang/prometheus"
 

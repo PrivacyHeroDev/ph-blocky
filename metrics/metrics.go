@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"github.com/stgnet/blocky/config"
+	"github.com/privacyherodev/ph-blocky/config"
 
 	"github.com/go-chi/chi"
 	"github.com/prometheus/client_golang/prometheus"

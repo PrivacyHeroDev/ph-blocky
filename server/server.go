@@ -1,20 +1,20 @@
 package server
 
 import (
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 	"net/http"
 	"runtime"
 	"runtime/debug"
 	"time"
 
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/metrics"
-	"github.com/stgnet/blocky/resolver"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/metrics"
+	"github.com/privacyherodev/ph-blocky/resolver"
 
 	"fmt"
 	"net"
 
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"github.com/go-chi/chi"
 	"github.com/miekg/dns"

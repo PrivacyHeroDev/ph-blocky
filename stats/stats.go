@@ -1,10 +1,11 @@
 package stats
 
 import (
-	"github.com/stgnet/blocky/util"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/privacyherodev/ph-blocky/util"
 )
 
 const (

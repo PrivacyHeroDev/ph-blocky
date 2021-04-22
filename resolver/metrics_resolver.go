@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/metrics"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/metrics"
 
 	"github.com/miekg/dns"
 	"github.com/prometheus/client_golang/prometheus"

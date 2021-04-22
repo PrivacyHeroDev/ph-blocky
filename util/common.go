@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 
 	"github.com/miekg/dns"
 	"github.com/sirupsen/logrus"

@@ -1,9 +1,9 @@
 package resolver
 
 import (
-	"github.com/stgnet/blocky/config"
-	. "github.com/stgnet/blocky/helpertest"
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/config"
+	. "github.com/privacyherodev/ph-blocky/helpertest"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"github.com/miekg/dns"
 	. "github.com/onsi/ginkgo"

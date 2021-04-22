@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/stgnet/blocky/api"
+	"github.com/privacyherodev/ph-blocky/api"
 
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 
 	"github.com/miekg/dns"
 	"github.com/spf13/cobra"

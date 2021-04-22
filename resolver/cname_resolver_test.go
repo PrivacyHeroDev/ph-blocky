@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/miekg/dns"
-	"github.com/stgnet/blocky/config"
-	. "github.com/stgnet/blocky/helpertest"
+	"github.com/privacyherodev/ph-blocky/config"
+	. "github.com/privacyherodev/ph-blocky/helpertest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

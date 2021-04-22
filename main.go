@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stgnet/blocky/cmd"
 	"os"
+
+	"github.com/privacyherodev/ph-blocky/cmd"
 )
 
 func main() {

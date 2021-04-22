@@ -1,14 +1,14 @@
 package server
 
 import (
-	"github.com/stgnet/blocky/api"
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/docs"
-	"github.com/stgnet/blocky/util"
-	"github.com/stgnet/blocky/web"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/privacyherodev/ph-blocky/api"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/docs"
+	"github.com/privacyherodev/ph-blocky/util"
+	"github.com/privacyherodev/ph-blocky/web"
 	"html/template"
 	"io/ioutil"
 	"net"

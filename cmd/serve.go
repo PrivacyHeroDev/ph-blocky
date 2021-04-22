@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/server"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/server"
 
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 
 	"github.com/spf13/cobra"
 )

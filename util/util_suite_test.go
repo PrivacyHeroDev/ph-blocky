@@ -1,8 +1,9 @@
 package util
 
 import (
-	"github.com/stgnet/blocky/log"
 	"testing"
+
+	"github.com/privacyherodev/ph-blocky/log"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/stgnet/blocky/api"
 	"encoding/json"
+	"github.com/privacyherodev/ph-blocky/api"
 	"net/http"
 	"net/http/httptest"
 	"net/url"

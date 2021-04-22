@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/stgnet/blocky/log"
+	"github.com/privacyherodev/ph-blocky/log"
 	"testing"
 
 	. "github.com/onsi/ginkgo"

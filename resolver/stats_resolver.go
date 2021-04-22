@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/stgnet/blocky/stats"
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/stats"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/miekg/dns"

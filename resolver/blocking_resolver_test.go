@@ -3,11 +3,11 @@ package resolver
 import (
 	"testing"
 
-	"github.com/stgnet/blocky/api"
-	"github.com/stgnet/blocky/config"
-	. "github.com/stgnet/blocky/helpertest"
-	"github.com/stgnet/blocky/metrics"
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/api"
+	"github.com/privacyherodev/ph-blocky/config"
+	. "github.com/privacyherodev/ph-blocky/helpertest"
+	"github.com/privacyherodev/ph-blocky/metrics"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"encoding/json"
 	"net/http"

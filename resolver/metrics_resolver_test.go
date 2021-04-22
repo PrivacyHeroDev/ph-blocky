@@ -3,7 +3,7 @@ package resolver
 import (
 	"errors"
 
-	"github.com/stgnet/blocky/config"
+	"github.com/privacyherodev/ph-blocky/config"
 
 	"github.com/miekg/dns"
 	. "github.com/onsi/ginkgo"

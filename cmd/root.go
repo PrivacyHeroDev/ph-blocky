@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/log"
 	"fmt"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/log"
 	"os"
 
 	"github.com/spf13/cobra"

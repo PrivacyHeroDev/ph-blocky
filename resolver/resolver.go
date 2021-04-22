@@ -1,13 +1,13 @@
 package resolver
 
 import (
-	"github.com/stgnet/blocky/log"
 	"fmt"
+	"github.com/privacyherodev/ph-blocky/log"
 	"net"
 	"strings"
 	"time"
 
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"github.com/miekg/dns"
 	"github.com/sirupsen/logrus"

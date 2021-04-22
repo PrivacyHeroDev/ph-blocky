@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/miekg/dns"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/util"
 	"github.com/sirupsen/logrus"
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/util"
 )
 
 type CnameResolver struct {

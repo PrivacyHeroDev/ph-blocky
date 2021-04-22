@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/stgnet/blocky/config"
-	"github.com/stgnet/blocky/util"
+	"github.com/privacyherodev/ph-blocky/config"
+	"github.com/privacyherodev/ph-blocky/util"
 
 	"github.com/miekg/dns"
 	"github.com/patrickmn/go-cache"

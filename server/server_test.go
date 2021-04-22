@@ -1,14 +1,14 @@
 package server
 
 import (
-	"github.com/stgnet/blocky/api"
-	"github.com/stgnet/blocky/config"
-	. "github.com/stgnet/blocky/helpertest"
-	"github.com/stgnet/blocky/resolver"
-	"github.com/stgnet/blocky/util"
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/privacyherodev/ph-blocky/api"
+	"github.com/privacyherodev/ph-blocky/config"
+	. "github.com/privacyherodev/ph-blocky/helpertest"
+	"github.com/privacyherodev/ph-blocky/resolver"
+	"github.com/privacyherodev/ph-blocky/util"
 	"io/ioutil"
 	"log"
 	"net"
