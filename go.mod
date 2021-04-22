@@ -1,4 +1,4 @@
-module github.com/stgnet/blocky
+module github.com/PrivacyHeroDev/ph-blocky
 
 go 1.14
 
