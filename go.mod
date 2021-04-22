@@ -1,4 +1,4 @@
-module github.com/PrivacyHeroDev/ph-blocky
+module github.com/privacyherodev/ph-blocky
 
 go 1.14
 
