@@ -6,6 +6,7 @@
 [![GitHub Release Date](https://img.shields.io/github/release-date/0xERR0R/blocky "Latest release date")](https://github.com/0xERR0R/blocky/releases)
 [![Codecov](https://img.shields.io/codecov/c/gh/0xERR0R/blocky "Code coverage")](https://codecov.io/gh/0xERR0R/blocky)
 [![Codacy grade](https://img.shields.io/codacy/grade/8fcd8f8420b8419c808c47af58ed9282 "Codacy grade")](#)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2F0xERR0R%2Fblocky.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2F0xERR0R%2Fblocky?ref=badge_shield)
 
 <p align="center">
   <img height="200" src="https://github.com/0xERR0R/blocky/blob/master/docs/blocky.svg">
@@ -31,14 +32,14 @@ Blocky is a DNS proxy for the local network written in Go with following feature
 - Runs fine on raspberry pi
 
 ## Installation and configuration
-Create `config.yml` file with your configuration [as yml](config.yml):
+Create `config.yml` file with your configuration:
 ```yml
 upstream:
     # these external DNS resolvers will be used. Blocky picks 2 random resolvers from the list for each query
-    # format for resolver: [net:]host:[port][/path]. net could be empty (default, shortcut for tcp+udp), tcp+udp, tcp, udp, tcp-tls or https (DoH). If port is empty, default port will be used (53 for udp and tcp, 853 for tcp-tls, 443 for https (Doh))
+    # format for resolver: net:host:[port][/path]. net could be tcp, udp, tcp-tls or https (DoH). If port is empty, default port will be used (53 for udp and tcp, 853 for tcp-tls, 443 for https (Doh))
     externalResolvers:
-      - 46.182.19.48
-      - 80.241.218.68
+      - udp:46.182.19.48
+      - udp:80.241.218.68
       - tcp-tls:fdns1.dismail.de:853
       - https://dns.digitale-gesellschaft.ch/dns-query
   
@@ -66,7 +67,7 @@ blocking:
         - https://zeustracker.abuse.ch/blocklist.php?download=domainblocklist
         - https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt
       special:
-        - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
+        - https://hosts-file.net/ad_servers.txt
     # definition of whitelist groups. Attention: if the same group has black and whitelists, whitelists will be used to disable particular blacklist entries. If a group has only whitelist entries -> this means only domains from this list are allowed, all other domains will be blocked
     whiteLists:
       ads:
@@ -77,12 +78,9 @@ blocking:
       default:
         - ads
         - special
-      # use client name (with wildcard support: * - sequence of any characters, [0-9] - range)
-      # or single ip address / client subnet as CIDR notation
-      laptop*:
+      # use client name or ip address
+      laptop.fritz.box:
         - ads
-      192.168.178.1/24:
-        - special
     # which response will be sent, if query is blocked:
     # zeroIp: 0.0.0.0 will be returned (default)
     # nxDomain: return NXDOMAIN as return code
@@ -148,8 +146,6 @@ httpsKeyFile: server.key
 bootstrapDns: tcp:1.1.1.1
 # optional: Log level (one from debug, info, warn, error). Default: info
 logLevel: info
-# optional: Log format (text or json). Default: text
-logFormat: text
 ```
 
 ### Run with docker
