@@ -268,6 +268,7 @@ func shouldHandle(question dns.Question) bool {
 
 func (r *BlockingResolver) handleBlacklist(groupsToCheck []string,
 	request *Request, logger *logrus.Entry) (*Response, error) {
+
 	logger.WithField("groupsToCheck", strings.Join(groupsToCheck, "; ")).Debug("checking groups for request")
 	whitelistOnlyAllowed := reflect.DeepEqual(groupsToCheck, r.whitelistOnlyGroups)
 
@@ -288,23 +289,9 @@ func (r *BlockingResolver) handleBlacklist(groupsToCheck []string,
 			return r.handleBlocked(logger, request, question, "BLOCKED (WHITELIST ONLY)")
 		}
 
-		port := r.getPort(groupsToCheck)
-		resp, err := resolvePrivate(request, port)
-		if err != nil {
-			return nil, err
+		if blocked, group := r.matches(groupsToCheck, r.blacklistMatcher, domain); blocked {
+			return r.handleBlocked(logger, request, question, fmt.Sprintf("BLOCKED (%s)", group))
 		}
-
-		if resp.Rcode == dns.RcodeNameError {
-			return r.handleBlocked(logger, request, question, fmt.Sprintf("BLOCKED PRIVATE (%d)", port))
-		}
-
-		if resp.Rcode == dns.RcodeSuccess {
-			return &Response{Res: resp, RType: RESOLVED, Reason: fmt.Sprintf("RESOLVED PRIVATE (%d)", port)}, nil
-		}
-
-		// if blocked, group := r.matches(groupsToCheck, r.blacklistMatcher, domain); blocked {
-		// 	return r.handleBlocked(logger, request, question, fmt.Sprintf("BLOCKED (%s)", group))
-		// }
 	}
 
 	return nil, nil
@@ -360,6 +347,31 @@ func extractEntryToCheckFromResponse(rr dns.RR) (entryToCheck string, tName stri
 // returns groups which should be checked for client's request
 func (r *BlockingResolver) groupsToCheckForClient(request *Request) (groups []string) {
 	getEdnsData(request, r.cfg.ClientGroupsBlock, &groups)
+
+	uniqueGroups := buildGroupsMap(groups)
+	toggles := map[string]bool{"adblock": false, "malware": false, "adult": false}
+	for k, v := range r.cfg.Global {
+		toggles[k] = v
+	}
+
+	for k, v := range toggles {
+		v2, _ := uniqueGroups[k]
+
+		if v && v2 {
+			toggles[k] = true
+			continue
+		}
+		toggles[k] = false
+		continue
+	}
+
+	groups = []string{}
+	for k, v := range toggles {
+		if v {
+			groups = append(groups, k)
+		}
+
+	}
 
 	for _, cName := range request.ClientNames {
 		groupsByName, found := r.cfg.ClientGroupsBlock[cName]
