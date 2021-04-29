@@ -54,6 +54,7 @@ func createUpstreamClient(cfg config.Upstream) (client upstreamClient, upstreamU
 		client: &dns.Client{
 			Net:     cfg.Net,
 			Timeout: defaultTimeout,
+			UDPSize: 4096,
 		},
 	}, net.JoinHostPort(cfg.Host, strconv.Itoa(int(cfg.Port)))
 }
