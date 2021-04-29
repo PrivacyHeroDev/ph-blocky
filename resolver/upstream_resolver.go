@@ -103,6 +103,7 @@ func (r *httpUpstreamClient) callExternal(msg *dns.Msg,
 
 func (r *dnsUpstreamClient) callExternal(msg *dns.Msg,
 	upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
+	msg.SetEdns0(4096, false)
 	return r.client.Exchange(msg, upstreamURL)
 }
 
