@@ -101,9 +101,9 @@ func (r *httpUpstreamClient) callExternal(msg *dns.Msg,
 	return &response, time.Since(start), nil
 }
 
-func (r *dnsUpstreamClient) callExternal(msg *dns.Msg,
-	upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
-	msg.SetEdns0(4096, false)
+func (r *dnsUpstreamClient) callExternal(msg *dns.Msg, upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
+	// opt := msg.IsEdns0()
+	// opt.Option = nil
 	return r.client.Exchange(msg, upstreamURL)
 }
 
