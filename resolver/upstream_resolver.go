@@ -103,7 +103,19 @@ func (r *httpUpstreamClient) callExternal(msg *dns.Msg,
 
 func (r *dnsUpstreamClient) callExternal(msg *dns.Msg, upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
 	// opt := msg.IsEdns0()
+
 	// opt.Option = nil
+	mac, err := getMacFromEDNS0(msg)
+	if err != nil {
+		logger("testsetset").Error(err)
+	}
+	fmt.Println(mac)
+	fmt.Println(mac)
+	fmt.Println(mac)
+	fmt.Println(mac)
+	fmt.Println(mac)
+	fmt.Println(mac)
+
 	return r.client.Exchange(msg, upstreamURL)
 }
 

@@ -208,7 +208,7 @@ func createQueryLogRow(logEntry *queryLogEntry) []string {
 	clientID := request.ClientIP.String()
 
 	if request.ClientIP.String() == "127.0.0.1" {
-		clientID, _ = getMacFromEDNS0(logEntry.request)
+		clientID, _ = getMacFromEDNS0(logEntry.request.Req)
 	}
 
 	return []string{
