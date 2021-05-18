@@ -102,16 +102,18 @@ func (r *httpUpstreamClient) callExternal(msg *dns.Msg,
 }
 
 func (r *dnsUpstreamClient) callExternal(msg *dns.Msg, upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
-	// opt := msg.IsEdns0()
+	for i := len(msg.Extra) - 1; i >= 0; i-- {
+		if msg.Extra[i].Header().Rrtype == dns.TypeOPT {
+			// opt := msg.Extra[i].(*dns.OPT)
+			msg.Extra = append(msg.Extra[:i], msg.Extra[i+1:]...)
+		}
+	}
 
 	// opt.Option = nil
 	mac, err := getMacFromEDNS0(msg)
 	if err != nil {
 		logger("testsetset").Error(err)
 	}
-	fmt.Println(mac)
-	fmt.Println(mac)
-	fmt.Println(mac)
 	fmt.Println(mac)
 	fmt.Println(mac)
 	fmt.Println(mac)
