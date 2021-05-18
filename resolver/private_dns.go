@@ -27,9 +27,9 @@ func buildGroupsMap(slice []string) map[string]bool {
 	return m
 }
 
-func getMacFromEDNS0(request *Request) (string, error) {
+func getMacFromEDNS0(msg *dns.Msg) (string, error) {
 
-	opt := request.Req.IsEdns0()
+	opt := msg.IsEdns0()
 
 	if opt != nil {
 		if len(opt.Option) == 0 {
@@ -50,7 +50,7 @@ func getMacFromEDNS0(request *Request) (string, error) {
 }
 
 func getEdnsData(request *Request, cfg map[string][]string, groups *[]string) {
-	mac, err := getMacFromEDNS0(request)
+	mac, err := getMacFromEDNS0(request.Req)
 	if err != nil {
 		logger("groups_to_check").Error(err)
 	}
