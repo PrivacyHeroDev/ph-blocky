@@ -102,19 +102,26 @@ func (r *httpUpstreamClient) callExternal(msg *dns.Msg,
 }
 
 func (r *dnsUpstreamClient) callExternal(msg *dns.Msg, upstreamURL string) (response *dns.Msg, rtt time.Duration, err error) {
-	// opt := msg.IsEdns0()
+	opt := msg.IsEdns0()
+
+	if opt != nil {
+		if len(opt.Option) != 0 {
+			for i, v := range opt.Option {
+				switch v.(type) {
+				case *dns.EDNS0_LOCAL:
+					msg.Extra = append(msg.Extra[:i], msg.Extra[i+1:]...)
+				}
+			}
+
+		}
+
+	}
 
 	// opt.Option = nil
-	mac, err := getMacFromEDNS0(msg)
-	if err != nil {
-		logger("testsetset").Error(err)
+	mac, _ := getMacFromEDNS0(msg)
+	if len(mac) != 0 {
+		logger("external call").Info("edns mac present in external call")
 	}
-	fmt.Println(mac)
-	fmt.Println(mac)
-	fmt.Println(mac)
-	fmt.Println(mac)
-	fmt.Println(mac)
-	fmt.Println(mac)
 
 	return r.client.Exchange(msg, upstreamURL)
 }
