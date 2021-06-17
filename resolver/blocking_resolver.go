@@ -349,7 +349,7 @@ func (r *BlockingResolver) groupsToCheckForClient(request *Request) (groups []st
 	getEdnsData(request, r.cfg.ClientGroupsBlock, &groups)
 
 	uniqueGroups := buildGroupsMap(groups)
-	toggles := map[string]bool{"adblock": false, "malware": false, "adult": false, "whitelist": true}
+	toggles := map[string]bool{"adblock": false, "malware": false, "adult": false, "whitelist": false}
 	for k, v := range r.cfg.Global {
 		toggles[k] = v
 	}
@@ -391,6 +391,14 @@ func (r *BlockingResolver) groupsToCheckForClient(request *Request) (groups []st
 		if !found {
 			// return default
 			groups = r.cfg.ClientGroupsBlock["default"]
+		}
+	}
+
+	// if whitelist is the only group.
+	// remove it
+	if len(groups) == 1 {
+		if groups[0] == "whitelist" {
+			groups = []string{}
 		}
 	}
 
