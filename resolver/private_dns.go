@@ -52,7 +52,8 @@ func getMacFromEDNS0(msg *dns.Msg) (string, error) {
 func getEdnsData(request *Request, cfg map[string][]string, groups *[]string) {
 	mac, err := getMacFromEDNS0(request.Req)
 	if err != nil {
-		logger("groups_to_check").Error(err)
+		// logging is too verbose
+		// logger("groups_to_check").Error(err)
 	}
 
 	if len(mac) > 0 {
