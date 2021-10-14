@@ -25,7 +25,10 @@ const (
 )
 
 // nolint:gochecknoglobals
-var timeout = 30 * time.Second
+var (
+	timeout = 30 * time.Second
+	etags   = map[string]Etag{}
+)
 
 type ListCacheType int
 
@@ -58,6 +61,11 @@ type ListCache struct {
 	refreshPeriod time.Duration
 
 	counter *prometheus.GaugeVec
+}
+type Etag struct {
+	Key  string
+	Date string
+	Body io.ReadCloser
 }
 
 func (b *ListCache) Configuration() (result []string) {
@@ -242,8 +250,13 @@ func downloadFile(link string) (io.ReadCloser, error) {
 
 	for attempt <= 3 {
 		//nolint:bodyclose
-		if resp, err = client.Get(link); err == nil {
+		req, _ := buildRequest(link)
+		if resp, err = client.Do(req); err == nil {
+			if resp.StatusCode == http.StatusNotModified {
+				return etags[link].Body, nil
+			}
 			if resp.StatusCode == http.StatusOK {
+				updateEtagCache(link, resp)
 				return resp.Body, nil
 			}
 
@@ -263,6 +276,36 @@ func downloadFile(link string) (io.ReadCloser, error) {
 	}
 
 	return nil, err
+}
+
+// Update the internal Etags cache.
+func updateEtagCache(url string, resp *http.Response) (io.ReadCloser, error) {
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// If etags headers are missing, ignore.
+	key := resp.Header.Get("ETag")
+	date := resp.Header.Get("Date")
+	if key == "" || date == "" {
+		return resp.Body, nil
+	}
+	etags[url] = Etag{key, date, resp.Body}
+	return resp.Body, nil
+}
+
+// Build an HTTP request, including Etags data.
+func buildRequest(url string) (*http.Request, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if _, present := etags[url]; present {
+		req.Header.Add("If-None-Match", etags[url].Key)
+		req.Header.Add("If-Modified-Since", etags[url].Date)
+	}
+	return req, err
 }
 
 func readFile(file string) (io.ReadCloser, error) {
