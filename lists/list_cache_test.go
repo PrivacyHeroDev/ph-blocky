@@ -1,20 +1,23 @@
 package lists
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"github.com/privacyherodev/ph-blocky/config"
 	. "github.com/privacyherodev/ph-blocky/helpertest"
 	"github.com/privacyherodev/ph-blocky/metrics"
-	"net/http"
-	"sync/atomic"
-	"time"
-
-	"net/http/httptest"
-	"os"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-
-	"github.com/go-chi/chi"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 )
 
@@ -259,3 +262,58 @@ var _ = Describe("ListCache", func() {
 		})
 	})
 })
+
+func quick(c *gin.Context) {
+	key := "black"
+	e := fmt.Sprintf("%s", key)
+	c.Header("Etag", e)
+	c.Header("Cache-Control", "max-age=2592000") // 30 days
+	c.Status(http.StatusOK)
+}
+
+func TestListCache_refresh(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	// api.GetRouterQuicgin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.GET("/quick", quick)
+
+	// c, _ := gin.CreateTestContext(w)
+	// ?mac=a1&sv=123
+
+	// Perform the request
+	go r.Run(":8181")
+
+	type fields struct {
+		groupCaches   map[string]map[string][]string
+		lock          sync.RWMutex
+		groupToLinks  map[string][]string
+		refreshPeriod time.Duration
+		counter       *prometheus.GaugeVec
+	}
+	tests := []struct {
+		name   string
+		fields fields
+	}{
+		{
+			name: "test1",
+			fields: fields{
+				groupToLinks: map[string][]string{
+					"testGroup": {"http://localhost:8181/quick"},
+				},
+				groupCaches: map[string]map[string][]string{},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := &ListCache{
+				groupCaches:   tt.fields.groupCaches,
+				lock:          tt.fields.lock,
+				groupToLinks:  tt.fields.groupToLinks,
+				refreshPeriod: tt.fields.refreshPeriod,
+				counter:       tt.fields.counter,
+			}
+			b.refresh()
+		})
+	}
+}

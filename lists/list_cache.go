@@ -54,7 +54,7 @@ type Matcher interface {
 }
 
 type ListCache struct {
-	groupCaches map[string][]string
+	groupCaches map[string]map[string][]string
 	lock        sync.RWMutex
 
 	groupToLinks  map[string][]string
@@ -65,7 +65,6 @@ type ListCache struct {
 type Etag struct {
 	Key  string
 	Date string
-	Body io.ReadCloser
 }
 
 func (b *ListCache) Configuration() (result []string) {
@@ -88,8 +87,10 @@ func (b *ListCache) Configuration() (result []string) {
 	var total int
 
 	for group, cache := range b.groupCaches {
-		result = append(result, fmt.Sprintf("  %s: %d entries", group, len(cache)))
-		total += len(cache)
+		for _, v := range cache {
+			result = append(result, fmt.Sprintf("  %s: %d entries", group, len(v)))
+			total += len(v)
+		}
 	}
 
 	result = append(result, fmt.Sprintf("  TOTAL: %d entries", total))
@@ -98,7 +99,7 @@ func (b *ListCache) Configuration() (result []string) {
 }
 
 func NewListCache(t ListCacheType, groupToLinks map[string][]string, refreshPeriod int) *ListCache {
-	groupCaches := make(map[string][]string)
+	groupCaches := make(map[string]map[string][]string)
 
 	p := time.Duration(refreshPeriod) * time.Minute
 	if refreshPeriod == 0 {
@@ -195,8 +196,10 @@ func (b *ListCache) Match(domain string, groupsToCheck []string) (found bool, gr
 	defer b.lock.RUnlock()
 
 	for _, g := range groupsToCheck {
-		if contains(domain, b.groupCaches[g]) {
-			return true, g
+		for _, v := range b.groupCaches[g] {
+			if contains(domain, v) {
+				return true, g
+			}
 		}
 	}
 
@@ -214,14 +217,21 @@ func contains(domain string, cache []string) bool {
 
 func (b *ListCache) refresh() {
 	for group, links := range b.groupToLinks {
-		cacheForGroup := createCacheForGroup(links)
+		for _, v := range links {
+			cacheForGroup := createCacheForGroup([]string{v})
 
-		if cacheForGroup != nil {
-			b.lock.Lock()
-			b.groupCaches[group] = cacheForGroup
-			b.lock.Unlock()
-		} else {
-			logger().Warn("Populating of group cache failed, leaving items from last successful download in cache")
+			if cacheForGroup != nil {
+				b.lock.Lock()
+				if _, ok := b.groupCaches[group]; !ok {
+					b.groupCaches[group] = map[string][]string{v: cacheForGroup}
+				} else {
+					b.groupCaches[group][v] = cacheForGroup
+				}
+				b.lock.Unlock()
+			} else {
+				logger().Warn("Populating of group cache failed, leaving items from last successful download in cache")
+			}
+
 		}
 
 		if metrics.IsEnabled() {
@@ -230,9 +240,19 @@ func (b *ListCache) refresh() {
 
 		logger().WithFields(logrus.Fields{
 			"group":       group,
-			"total_count": len(b.groupCaches[group]),
+			"total_count": getTotalLen(b.groupCaches[group]),
 		}).Info("group import finished")
 	}
+}
+
+func getTotalLen(cache map[string][]string) int {
+	t := 0
+	for _, v := range cache {
+		t += len(v)
+	}
+
+	return t
+
 }
 
 func downloadFile(link string) (io.ReadCloser, error) {
@@ -253,7 +273,9 @@ func downloadFile(link string) (io.ReadCloser, error) {
 		req, _ := buildRequest(link)
 		if resp, err = client.Do(req); err == nil {
 			if resp.StatusCode == http.StatusNotModified {
-				return etags[link].Body, nil
+				logger().WithField("link", link).Info("not modified")
+				fmt.Println("NOT MODIFIED")
+				return nil, nil
 			}
 			if resp.StatusCode == http.StatusOK {
 				updateEtagCache(link, resp)
@@ -291,7 +313,7 @@ func updateEtagCache(url string, resp *http.Response) (io.ReadCloser, error) {
 	if key == "" || date == "" {
 		return resp.Body, nil
 	}
-	etags[url] = Etag{key, date, resp.Body}
+	etags[url] = Etag{key, date}
 	return resp.Body, nil
 }
 
